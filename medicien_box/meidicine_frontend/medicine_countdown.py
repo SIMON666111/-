@@ -58,7 +58,7 @@ class MedicineReminderManager:
                                 # 这里可以添加提醒逻辑，比如弹窗、声音等
                                 buzzer.pitch(131,16)
                                 popup(f"提醒：用户 {user.name} 该服用 {medicine.m_name} 了！")
-                                siot.publish(topic="topic/a", data=f"face_recognize_request,id={user_id}")
+                                siot.publish(topic="topic/a", data=f"face_recognize_request,id={user.id}")
                                 # 可以在这里添加 PyWebIO 的输出或其他提醒方式
                 # 每分钟检查一次
                 time.sleep(60)
