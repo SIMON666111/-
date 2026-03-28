@@ -202,66 +202,83 @@ class user:
         self.medicine_save()
         self.main_work(menu)
     #################################################################################################################################
-    def main_work(self,system_menu):    #前端页面显示      
-        global menu
-        menu = system_menu
-        # 定义横幅样式和标题
+   def _show_page_header(self):
+        """显示页面头部（横幅）"""
         banner_html = """
         <div style="
-            width: 100%;          /* 宽度占满屏幕 */
-            height: 80px;         /* 横幅高度，可根据需要调整 */
-            background-color: #5E5EB3;  /* 横幅背景色，浅灰色更美观 */
-            display: flex;        /* 弹性布局，用于居中 */
-            align-items: center;  /* 垂直居中 */
-            justify-content: center;  /* 水平居中 */
-            border-radius: 4px;   /* 轻微圆角，更美观 */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 轻微阴影，提升质感 */
-            margin-bottom: 20px;  /* 与下方内容的间距 */
+            width: 100%;
+            height: 80px;
+            background-color: #5E5EB3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         ">
             <h2 style="
-                color: white;      /* 文字黑色 */
-                margin: 0;         /* 清除默认边距 */
-                font-size: 24px;   /* 字体大小适中，可调整 */
-                font-weight: 600;  /* 字体加粗，更醒目 */
+                color: white;
+                margin: 0;
+                font-size: 24px;
+                font-weight: 600;
             ">智能药箱控制系统</h2>
         </div>
         """
-        small_rectangle = """
-            <div style="
-                width: 400px;          /* 长方形宽度 */
-                height: 50px;         /* 长方形高度 */
-                background-color: #4CAF50;  /* 长方形背景色（绿色） */
-                border: 2px solid #388E3C;  /* 边框（深绿色） */
-                border-radius: 4px;    /* 轻微圆角 */
-                box-shadow: 0 2px 4px rgba(0,0,0,0.2);  /* 轻微阴影 */
-                margin: 10px 0;        /* 与上下元素的间距 */
-                display: flex;         /* 弹性布局，用于居中内容 */
-                align-items: center;   /* 垂直居中 */
-                justify-content: center; /* 水平居中 */
-                color: white;          /* 文字颜色 */
-                font-weight: bold;     /* 文字加粗 */
-            ">定时用药</div>
-            """      
-        # 输出横幅到网页 
         put_html(banner_html)
-        put_button('用户设置', onclick=lambda: [clear(),menu()])
+    
+    def _show_user_settings_button(self):
+        """显示用户设置按钮和绿色长方形"""
+        small_rectangle = """
+        <div style="
+            width: 400px;
+            height: 50px;
+            background-color: #4CAF50;
+            border: 2px solid #388E3C;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        ">定时用药</div>
+        """
+        global menu
+        put_button('用户设置', onclick=lambda: [clear(), menu()])
         put_html(small_rectangle)
-        # if self.face_data is None:
-        #     face_name=self.name
-        #     popup(f"{face_name}还未录入人脸信息")
-        #     print(self.id)
-        #     face_system.append_face_data(self.id)
-        #     print('人脸信息录入成功')
-        #     self.face_data = 1
-        #     us.save_data()
-        #载入用药信息的json文件
-        with use_scope('medicine_table',clear=True):
+    
+    def _show_medicine_table(self):
+        """显示用药信息表格"""
+        with use_scope('medicine_table', clear=True):
             self.medicine_load()
-            put_table([[m.m_name,m.time_end,m.dosage,m.get_countdown()] for m in self.medicine_list],header=['用药种类','用药时间','用药剂量','倒计时'])
+            put_table(
+                [[m.m_name, m.time_end, m.dosage, m.get_countdown()] for m in self.medicine_list],
+                header=['用药种类', '用药时间', '用药剂量', '倒计时']
+            )
+    
+    def _show_action_buttons(self):
+        """显示操作按钮（添加/修改药物）"""
+        global input_record, saying
         put_text('请输入用药信息')
-        with use_scope('medcine_button',clear=True):
+        with use_scope('medcine_button', clear=True):
             put_button(saying[input_record], onclick=lambda: self.in_input())
             if self.medicine_list:
                 put_button('修改药物信息', onclick=lambda: self.modify_medicine_list())
-            # 自定义按钮样式，使用注册的回调函数
+    
+    def main_work(self, system_menu):
+        """主页面"""
+        global menu
+        menu = system_menu
         
+        # 显示页面头部
+        self._show_page_header()
+        
+        # 显示用户设置按钮
+        self._show_user_settings_button()
+        
+        # 显示用药表格
+        self._show_medicine_table()
+        
+        # 显示操作按钮（添加/修改药物）
+        self._show_action_buttons()
